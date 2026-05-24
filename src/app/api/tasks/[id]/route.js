@@ -4,17 +4,13 @@ import connect from "@/lib/dbConnect";
 
 export async function GET(req, context) {
   try {
-    console.log("context  this is ", context.id);
-
-    const params = await context.params;
-    const { id } = params;
+    const { id } = await context.params;
 
     if (!id) {
       return NextResponse.json({ error: "ID is required" }, { status: 400 });
     }
 
-    const tasksCollection = connect("tasks");
-
+    const tasksCollection = await connect("tasks");
     const task = await tasksCollection.findOne({ _id: new ObjectId(id) });
 
     if (!task) {
@@ -28,29 +24,22 @@ export async function GET(req, context) {
   }
 }
 
-// DELETE task
-
 export async function DELETE(req, context) {
   try {
-    const params = await context.params;
-    const { id } = params;
+    const { id } = await context.params;
 
     if (!id) {
       return NextResponse.json({ error: "ID is required" }, { status: 400 });
     }
 
-    const tasksCollection = connect("tasks");
-
+    const tasksCollection = await connect("tasks");
     const result = await tasksCollection.deleteOne({ _id: new ObjectId(id) });
 
     if (result.deletedCount === 0) {
       return NextResponse.json({ error: "Task not found" }, { status: 404 });
     }
 
-    return NextResponse.json({
-      message: "Task deleted successfully",
-      deletedCount: result.deletedCount,
-    });
+    return NextResponse.json({ message: "Task deleted successfully" });
   } catch (error) {
     console.error("Delete task error:", error);
     return NextResponse.json({ error: "Server error" }, { status: 500 });

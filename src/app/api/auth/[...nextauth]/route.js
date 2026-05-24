@@ -15,7 +15,7 @@ export const authOptions = {
           console.log("Attempting login for:", credentials.email);
 
           // Connect directly to MongoDB
-          const usersCollection = connect("users");
+          const usersCollection = await connect("users");
 
           const user = await usersCollection.findOne({
             email: credentials.email,

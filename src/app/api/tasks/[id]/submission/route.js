@@ -6,8 +6,7 @@ import { authOptions } from "@/app/api/auth/[...nextauth]/route";
 
 export async function POST(req, context) {
   try {
-    const params = await context.params;
-    const { id } = params;
+    const { id } = await context.params;
 
     if (!id) {
       return NextResponse.json(
@@ -16,7 +15,6 @@ export async function POST(req, context) {
       );
     }
 
-    // Get user session
     const session = await getServerSession(authOptions);
     if (!session) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
@@ -32,23 +30,18 @@ export async function POST(req, context) {
       );
     }
 
-    // Connect to MongoDB
-    const tasksCollection = connect("tasks");
-    const submissionsCollection = connect("submissions");
+    const tasksCollection = await connect("tasks");
+    const submissionsCollection = await connect("submissions");
 
-    // Find task
     const task = await tasksCollection.findOne({ _id: new ObjectId(id) });
-
     if (!task) {
       return NextResponse.json({ error: "Task not found" }, { status: 404 });
     }
 
-    // Check if task is full
     if (task.completions >= task.requiredCompletions) {
       return NextResponse.json({ error: "Task is full" }, { status: 400 });
     }
 
-    // Check if user already submitted this task
     const alreadySubmitted = await submissionsCollection.findOne({
       taskId: new ObjectId(id),
       submittedByEmail: session.user.email,
@@ -61,12 +54,11 @@ export async function POST(req, context) {
       );
     }
 
-    // Create new submission document
     const newSubmission = {
       taskId: new ObjectId(id),
       taskTitle: task.title,
       taskCategory: task.category,
-      taskReward: task.reward,
+      taskReward: parseFloat(task.reward),
       username: twitterUsername,
       submittedBy: session.user.name,
       submittedByEmail: session.user.email,
@@ -74,10 +66,8 @@ export async function POST(req, context) {
       status: "pending",
     };
 
-    // Insert submission into submissions collection
     const result = await submissionsCollection.insertOne(newSubmission);
 
-    // Update task completion count
     await tasksCollection.updateOne(
       { _id: new ObjectId(id) },
       { $inc: { completions: 1 } },

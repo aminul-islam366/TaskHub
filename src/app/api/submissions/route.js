@@ -3,6 +3,7 @@ import { getServerSession } from "next-auth/next";
 import connect from "@/lib/dbConnect";
 import { authOptions } from "@/app/api/auth/[...nextauth]/route";
 
+// GET logged-in user's own submissions
 export async function GET() {
   try {
     const session = await getServerSession(authOptions);
@@ -10,14 +11,15 @@ export async function GET() {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    const tasksCollection = await connect("tasks");
-    const tasks = await tasksCollection
-      .find({ createdBy: session.user.email })
+    const submissionsCollection = await connect("submissions");
+    const submissions = await submissionsCollection
+      .find({ submittedByEmail: session.user.email })
+      .sort({ submittedAt: -1 })
       .toArray();
 
-    return NextResponse.json(tasks);
+    return NextResponse.json(submissions);
   } catch (error) {
-    console.error("Get my tasks error:", error);
+    console.error("Get submissions error:", error);
     return NextResponse.json({ error: "Server error" }, { status: 500 });
   }
 }
