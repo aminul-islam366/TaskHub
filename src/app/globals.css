@@ -1,9 +1,19 @@
 @import "tailwindcss";
-@plugin "daisyui";
+@plugin "daisyui" {
+  themes: false;
+}
+
+/* Tailwind v4: class-based dark mode — .dark on <html> activates dark: variants */
+@variant dark (&:where(.dark, .dark *));
 
 :root {
   --background: #ffffff;
-  --foreground: #171717;
+  --foreground: #111827;
+}
+
+html.dark {
+  --background: #0f172a;
+  --foreground: #f1f5f9;
 }
 
 @theme inline {
@@ -13,19 +23,18 @@
   --font-mono: var(--font-geist-mono);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
-}
-
 body {
   background: var(--background);
   color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
+  transition:
+    background-color 0.2s,
+    color 0.2s;
 }
 
 .input-style {
-  @apply w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-transparent;
+  @apply w-full px-4 py-3 border border-gray-200 dark:border-gray-700 rounded-xl text-sm
+    focus:outline-none focus:ring-2 focus:ring-emerald-500
+    bg-gray-50 dark:bg-gray-800 dark:text-gray-100
+    focus:bg-white dark:focus:bg-gray-700 transition;
 }

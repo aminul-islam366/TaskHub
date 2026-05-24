@@ -5,10 +5,13 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import Swal from "sweetalert2";
 
+const inp =
+  "w-full px-4 py-3 border border-gray-200 dark:border-gray-700 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 bg-gray-50 dark:bg-gray-800 dark:text-gray-100 focus:bg-white dark:focus:bg-gray-700 transition";
+
 export default function Register() {
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
-  const [showPassword, setShowPassword] = useState(false);
+  const [showPw, setShowPw] = useState(false);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -36,7 +39,6 @@ export default function Register() {
       });
       return;
     }
-
     setIsLoading(true);
     try {
       const res = await fetch("/api/auth/register", {
@@ -45,7 +47,6 @@ export default function Register() {
         body: JSON.stringify({ name, email, password }),
       });
       const data = await res.json();
-
       if (res.ok) {
         Swal.fire({
           title: "Account Created!",
@@ -64,7 +65,7 @@ export default function Register() {
     } catch {
       Swal.fire({
         title: "Error",
-        text: "Something went wrong. Try again.",
+        text: "Something went wrong.",
         icon: "error",
         confirmButtonColor: "#059669",
       });
@@ -74,43 +75,44 @@ export default function Register() {
   };
 
   return (
-    <div className="min-h-screen bg-linear-to-br from-emerald-50 via-white to-green-50 flex items-center justify-center px-4 py-12">
+    <div className="min-h-screen bg-gray-50 dark:bg-gray-950 flex items-center justify-center px-4 py-12">
       <div className="w-full max-w-md">
-        {/* Logo */}
         <div className="text-center mb-8">
           <Link
             href="/"
-            className="inline-flex items-center gap-2 text-3xl font-bold text-emerald-600"
+            className="inline-flex items-center gap-2 text-2xl font-bold text-gray-900 dark:text-white"
           >
-            <div className="w-10 h-10 bg-emerald-600 rounded-xl flex items-center justify-center text-white text-lg">
+            <div className="w-9 h-9 bg-emerald-600 rounded-xl flex items-center justify-center text-white font-bold">
               T
             </div>
             TaskHub
           </Link>
-          <p className="text-gray-500 mt-2 text-sm">Create your free account</p>
+          <p className="text-gray-500 dark:text-gray-400 mt-2 text-sm">
+            Create your free account
+          </p>
         </div>
-
-        <div className="bg-white rounded-2xl shadow-xl border border-gray-100 p-8">
-          <h2 className="text-2xl font-bold text-gray-800 mb-1">Get started</h2>
-          <p className="text-gray-500 text-sm mb-6">
+        <div className="bg-white dark:bg-gray-900 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-800 p-8">
+          <h2 className="text-xl font-bold text-gray-900 dark:text-white mb-1">
+            Get started
+          </h2>
+          <p className="text-gray-500 dark:text-gray-400 text-sm mb-5">
             Join thousands earning on TaskHub
           </p>
 
-          {/* Benefits */}
-          <div className="flex gap-4 mb-6 p-4 bg-emerald-50 rounded-xl">
+          <div className="flex gap-3 mb-6 p-3 bg-emerald-50 dark:bg-emerald-900/20 rounded-xl border border-emerald-100 dark:border-emerald-800">
             {["Earn daily", "Free to join", "Instant tasks"].map((b) => (
               <div
                 key={b}
-                className="flex items-center gap-1.5 text-xs text-emerald-700 font-medium"
+                className="flex items-center gap-1 text-xs text-emerald-700 dark:text-emerald-400 font-medium"
               >
-                <span className="text-emerald-500">✓</span> {b}
+                <span>✓</span> {b}
               </div>
             ))}
           </div>
 
           <form onSubmit={handleSubmit} className="space-y-4">
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1.5">
+              <label className="block text-xs font-semibold text-gray-600 dark:text-gray-400 uppercase tracking-wide mb-1.5">
                 Full Name
               </label>
               <input
@@ -118,48 +120,45 @@ export default function Register() {
                 name="name"
                 required
                 placeholder="John Doe"
-                className="w-full px-4 py-3 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent bg-gray-50 focus:bg-white transition"
+                className={inp}
               />
             </div>
-
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1.5">
-                Email Address
+              <label className="block text-xs font-semibold text-gray-600 dark:text-gray-400 uppercase tracking-wide mb-1.5">
+                Email
               </label>
               <input
                 type="email"
                 name="email"
                 required
                 placeholder="you@example.com"
-                className="w-full px-4 py-3 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent bg-gray-50 focus:bg-white transition"
+                className={inp}
               />
             </div>
-
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1.5">
+              <label className="block text-xs font-semibold text-gray-600 dark:text-gray-400 uppercase tracking-wide mb-1.5">
                 Password
               </label>
               <div className="relative">
                 <input
-                  type={showPassword ? "text" : "password"}
+                  type={showPw ? "text" : "password"}
                   name="password"
                   required
                   minLength={6}
                   placeholder="Min. 6 characters"
-                  className="w-full px-4 py-3 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent bg-gray-50 focus:bg-white transition pr-12"
+                  className={`${inp} pr-14`}
                 />
                 <button
                   type="button"
-                  onClick={() => setShowPassword(!showPassword)}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 text-xs font-medium"
+                  onClick={() => setShowPw(!showPw)}
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-xs text-gray-400 hover:text-gray-600 dark:hover:text-gray-200 font-medium"
                 >
-                  {showPassword ? "Hide" : "Show"}
+                  {showPw ? "Hide" : "Show"}
                 </button>
               </div>
             </div>
-
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1.5">
+              <label className="block text-xs font-semibold text-gray-600 dark:text-gray-400 uppercase tracking-wide mb-1.5">
                 Confirm Password
               </label>
               <input
@@ -167,14 +166,13 @@ export default function Register() {
                 name="confirmPassword"
                 required
                 placeholder="Re-enter password"
-                className="w-full px-4 py-3 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent bg-gray-50 focus:bg-white transition"
+                className={inp}
               />
             </div>
-
             <button
               type="submit"
               disabled={isLoading}
-              className="w-full bg-emerald-600 hover:bg-emerald-700 text-white py-3 rounded-xl font-semibold text-sm transition-all duration-200 disabled:opacity-60 disabled:cursor-not-allowed flex items-center justify-center gap-2 shadow-lg shadow-emerald-200 mt-2"
+              className="w-full bg-emerald-600 hover:bg-emerald-500 text-white py-3 rounded-xl font-semibold text-sm transition disabled:opacity-60 flex items-center justify-center gap-2 mt-2"
             >
               {isLoading ? (
                 <>
@@ -186,13 +184,12 @@ export default function Register() {
               )}
             </button>
           </form>
-
-          <div className="mt-6 pt-6 border-t border-gray-100 text-center">
-            <p className="text-sm text-gray-500">
+          <div className="mt-6 pt-5 border-t border-gray-100 dark:border-gray-800 text-center">
+            <p className="text-sm text-gray-500 dark:text-gray-400">
               Already have an account?{" "}
               <Link
                 href="/login"
-                className="text-emerald-600 font-semibold hover:text-emerald-700"
+                className="text-emerald-600 dark:text-emerald-400 font-semibold hover:underline"
               >
                 Sign in
               </Link>

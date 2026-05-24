@@ -4,12 +4,13 @@ import { useState, useEffect } from "react";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import Navbar from "@/components/Navbar";
+import Footer from "@/components/Footer";
 import Swal from "sweetalert2";
 import { useForm } from "react-hook-form";
 import axios from "axios";
 
-const inputClass =
-  "w-full px-4 py-3 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 bg-gray-50 focus:bg-white transition";
+const inp =
+  "w-full px-4 py-3 border border-gray-200 dark:border-gray-700 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 bg-gray-50 dark:bg-gray-800 dark:text-gray-100 focus:bg-white dark:focus:bg-gray-700 transition";
 
 export default function CreateTask() {
   const router = useRouter();
@@ -48,14 +49,14 @@ export default function CreateTask() {
         confirmButtonColor: "#059669",
         showCancelButton: true,
         cancelButtonText: "Create Another",
-      }).then((result) => {
-        if (result.isConfirmed) router.push("/tasks");
+      }).then((r) => {
+        if (r.isConfirmed) router.push("/tasks");
         else reset();
       });
     } catch {
       Swal.fire({
         title: "Error",
-        text: "Something went wrong. Please try again.",
+        text: "Something went wrong.",
         icon: "error",
         confirmButtonColor: "#059669",
       });
@@ -66,7 +67,7 @@ export default function CreateTask() {
 
   if (status === "loading")
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gray-50">
+      <div className="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-gray-950">
         <div className="w-8 h-8 border-4 border-emerald-500 border-t-transparent rounded-full animate-spin" />
       </div>
     );
@@ -77,26 +78,29 @@ export default function CreateTask() {
   ).toFixed(2);
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-gray-50 dark:bg-gray-950 flex flex-col">
       <Navbar />
 
-      <div className="max-w-2xl mx-auto px-4 py-10">
-        {/* Header */}
-        <div className="mb-6">
-          <h1 className="text-2xl font-bold text-gray-900">Create a Task</h1>
-          <p className="text-gray-500 text-sm mt-1">
+      <div className="bg-gray-900 dark:bg-gray-950 border-b border-gray-800 text-white">
+        <div className="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+          <p className="text-emerald-400 text-xs font-semibold uppercase tracking-widest mb-1">
+            New Task
+          </p>
+          <h1 className="text-2xl font-bold">Create a Task</h1>
+          <p className="text-gray-400 mt-1 text-sm">
             Fill in the details and publish your task
           </p>
         </div>
+      </div>
 
-        <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-8">
+      <div className="flex-1 max-w-2xl mx-auto w-full px-4 sm:px-6 lg:px-8 py-8">
+        <div className="bg-white dark:bg-gray-900 rounded-2xl border border-gray-100 dark:border-gray-800 p-6 sm:p-8">
           <form onSubmit={handleSubmit(handleTask)} className="space-y-5">
-            {/* Category */}
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1.5">
+              <label className="block text-xs font-semibold text-gray-600 dark:text-gray-400 uppercase tracking-wide mb-1.5">
                 Task Category *
               </label>
-              <select {...register("category")} required className={inputClass}>
+              <select {...register("category")} required className={inp}>
                 <option value="">Select a category</option>
                 <option value="Twitter Follow">👥 Twitter Follow</option>
                 <option value="Twitter Retweet">🔄 Twitter Retweet</option>
@@ -104,9 +108,8 @@ export default function CreateTask() {
               </select>
             </div>
 
-            {/* Twitter Handle */}
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1.5">
+              <label className="block text-xs font-semibold text-gray-600 dark:text-gray-400 uppercase tracking-wide mb-1.5">
                 Twitter Handle *
               </label>
               <div className="relative">
@@ -118,33 +121,31 @@ export default function CreateTask() {
                   {...register("twitterHandle")}
                   required
                   placeholder="username"
-                  className={`${inputClass} pl-8`}
+                  className={`${inp} pl-8`}
                 />
               </div>
             </div>
 
-            {/* Auto Title */}
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1.5">
+              <label className="block text-xs font-semibold text-gray-600 dark:text-gray-400 uppercase tracking-wide mb-1.5">
                 Task Title
               </label>
               <input
                 type="text"
                 {...register("title")}
                 readOnly
-                placeholder="Auto-generated from category & handle"
-                className="w-full px-4 py-3 border border-gray-200 rounded-xl text-sm bg-gray-100 text-gray-500 cursor-not-allowed"
+                placeholder="Auto-generated"
+                className="w-full px-4 py-3 border border-gray-200 dark:border-gray-700 rounded-xl text-sm bg-gray-100 dark:bg-gray-800 text-gray-500 dark:text-gray-500 cursor-not-allowed"
               />
               <p className="text-xs text-gray-400 mt-1">
-                Generated automatically
+                Generated automatically from category & handle
               </p>
             </div>
 
-            {/* Tweet URL */}
             {(category === "Twitter Retweet" ||
               category === "Twitter Like") && (
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1.5">
+                <label className="block text-xs font-semibold text-gray-600 dark:text-gray-400 uppercase tracking-wide mb-1.5">
                   Tweet URL *
                 </label>
                 <input
@@ -152,30 +153,28 @@ export default function CreateTask() {
                   {...register("tweetUrl")}
                   required
                   placeholder="https://twitter.com/..."
-                  className={inputClass}
+                  className={inp}
                 />
               </div>
             )}
 
-            {/* Description */}
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1.5">
-                Task Description *
+              <label className="block text-xs font-semibold text-gray-600 dark:text-gray-400 uppercase tracking-wide mb-1.5">
+                Description *
               </label>
               <textarea
                 {...register("description")}
                 required
                 rows={3}
                 placeholder="Describe what workers need to do..."
-                className={inputClass + " resize-none"}
+                className={inp + " resize-none"}
               />
             </div>
 
-            {/* Reward & Completions */}
             <div className="grid grid-cols-2 gap-4">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1.5">
-                  Reward per Task ($) *
+                <label className="block text-xs font-semibold text-gray-600 dark:text-gray-400 uppercase tracking-wide mb-1.5">
+                  Reward ($) *
                 </label>
                 <input
                   type="number"
@@ -184,12 +183,12 @@ export default function CreateTask() {
                   {...register("reward")}
                   required
                   placeholder="0.50"
-                  className={inputClass}
+                  className={inp}
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1.5">
-                  Number of Workers *
+                <label className="block text-xs font-semibold text-gray-600 dark:text-gray-400 uppercase tracking-wide mb-1.5">
+                  Workers *
                 </label>
                 <input
                   type="number"
@@ -197,41 +196,39 @@ export default function CreateTask() {
                   {...register("requiredCompletions")}
                   required
                   placeholder="10"
-                  className={inputClass}
+                  className={inp}
                 />
               </div>
             </div>
 
-            {/* Budget Summary */}
             {totalBudget > 0 && (
-              <div className="bg-emerald-50 border border-emerald-100 rounded-xl p-4 flex items-center justify-between">
+              <div className="bg-emerald-50 dark:bg-emerald-900/20 border border-emerald-100 dark:border-emerald-800 rounded-xl p-4 flex items-center justify-between">
                 <div>
-                  <p className="text-sm font-medium text-emerald-800">
+                  <p className="text-sm font-semibold text-emerald-800 dark:text-emerald-300">
                     Total Budget
                   </p>
-                  <p className="text-xs text-emerald-600">
+                  <p className="text-xs text-emerald-600 dark:text-emerald-400">
                     {requiredCompletions} workers × ${reward}
                   </p>
                 </div>
-                <div className="text-2xl font-bold text-emerald-600">
+                <div className="text-2xl font-bold text-emerald-600 dark:text-emerald-400">
                   ${totalBudget}
                 </div>
               </div>
             )}
 
-            {/* Actions */}
             <div className="flex gap-3 pt-2">
               <button
                 type="button"
                 onClick={() => router.push("/tasks")}
-                className="flex-1 py-3 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-xl text-sm font-semibold transition"
+                className="flex-1 py-3 bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-xl text-sm font-semibold transition"
               >
                 Cancel
               </button>
               <button
                 type="submit"
                 disabled={isLoading}
-                className="flex-1 py-3 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl text-sm font-semibold transition shadow-lg shadow-emerald-200 disabled:opacity-60 flex items-center justify-center gap-2"
+                className="flex-1 py-3 bg-emerald-600 hover:bg-emerald-500 text-white rounded-xl text-sm font-semibold transition disabled:opacity-60 flex items-center justify-center gap-2"
               >
                 {isLoading ? (
                   <>
@@ -246,6 +243,7 @@ export default function CreateTask() {
           </form>
         </div>
       </div>
+      <Footer />
     </div>
   );
 }
